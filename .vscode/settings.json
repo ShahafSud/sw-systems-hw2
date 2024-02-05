@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/shahaf/Desktop/Systems/sw-systems-hw2",
+            "binaryPath": "/home/shahaf/Desktop/Systems/sw-systems-hw2/maind",
+            "binaryArgs": []
+        }
+    ]
+}

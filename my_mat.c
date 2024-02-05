@@ -8,10 +8,26 @@ void FloydWarshall(int mat[10][10], int out[10][10]){
     int go_arownd=0;
     int strait_path=0;
     int min_path=0;
+    int inf = 10000000;
     for(int i=0;i<10;i++){
         for(int j=0;j<10;j++){
             prev[i][j]=mat[i][j];
+            inf=inf+mat[i][j]; 
         }
+    }
+    for(int i=0;i<10;i++){
+        for(int j=0;j<10;j++){
+            if(prev[i][j]==0){
+                prev[i][j]=inf;
+            }
+        }
+    }
+    printf("the initial matrix is:\n");
+    for(int i=0;i<10;i++){
+        for(int j=0;j<10;j++){
+            printf("%d ",prev[i][j]);
+        }
+        printf("\n");
     }
     for(int k=0;k<10;k++){
         for(int i=0;i<10;i++){
@@ -26,9 +42,6 @@ void FloydWarshall(int mat[10][10], int out[10][10]){
                 if(j==k){
                     continue;
                 }
-                if(prev[i][k]==0 || prev[k][j]==0){
-                    go_arownd=0;
-                }
                 go_arownd=prev[i][k]+prev[k][j];
                 strait_path=prev[i][j];
                 if(go_arownd<=strait_path){
@@ -37,24 +50,26 @@ void FloydWarshall(int mat[10][10], int out[10][10]){
                 else{
                     min_path=strait_path;
                 }
-                if(strait_path==0 && go_arownd!=0){
-                    min_path=go_arownd;
-                }
-                if(strait_path!=0 && go_arownd==0){
-                    min_path=strait_path;
-                }
-                next[i][k]=min_path;
+                next[i][j]=min_path;
             }
         }
+        printf("the %dth matrix is:\n",k);
         for(int i=0;i<10;i++){
             for(int j=0;j<10;j++){
                 prev[i][j]=next[i][j];
+                printf("%d ",prev[i][j]);
             }
+            printf("\n");
         }
     }
     for(int i=0;i<10;i++){
         for(int j=0;j<10;j++){
-            out[i][j]=next[i][j];
+            if(next[i][j]<inf){
+                out[i][j]=next[i][j];
+            }
+            else{
+                out[i][j]=-1;
+            }
         }
     }
 }
@@ -72,7 +87,7 @@ void print_is_path(){
     int j=0;
     scanf("%d",&i);
     scanf("%d",&j);
-    if(FW[i][j]>0){
+    if(FW[i][j]>=0 && i!=j){
         printf("True\n");
     }
     else{
@@ -84,7 +99,7 @@ void print_path(){
     int j=0;
     scanf("%d",&i);
     scanf("%d",&j);
-    if(FW[i][j]==0){
+    if(i==j){
         printf("%d\n",-1);
     }
     else{
