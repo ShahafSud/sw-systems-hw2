@@ -6,7 +6,6 @@ char names[5][256];
 char *strAdress[5];
 static float best_value_for_waight = 0;
 
-//TODO : comments!
 void compute_cell(int itemID, int WL){//mostly if statmants
     if(WL==0){
         ds[itemID][WL]=0;
