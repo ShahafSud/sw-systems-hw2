@@ -1,116 +1,95 @@
 #include <stdio.h>
-//static float ds [5][20][2] = {0};//0==Value, 1==Wight
-static float ds [5][20] = {0};//0==Value, 1==Wight
+static float ds [5][21] = {0};
 static float values[5];
 static float weights[5];
-static float best = 0;
-// static char names[5][256];
-// void compute_cell(int itemID, int WL){
-//     if(itemID==0||WL==0){
-//         ds[itemID][WL][0]=0;
-//         ds[itemID][WL][1]=0;
-//         return;
-//     }
-//     if(ds[itemID][WL][0]!=-1){
-//         return;
-//     }
+char names[5][256];
+char *strAdress[5];
+static float best_value_for_waight = 0;
 
-//     float alowedW = WL-weights[itemID];
-//     if((int)alowedW==alowedW){
-//         alowedW=alowedW-1;
-//     }
-//     int oldWL=(int)alowedW+1;
-
-//     if(ds[itemID-1][oldWL][1] + weights[itemID]>WL){
-//         oldWL=oldWL-1;
-//     }
-
-//     float next_val;
-//     float next_W;
-//     if(ds[itemID-1][oldWL][0]+values[itemID]<=ds[itemID-1][WL][0]){
-//         next_val = ds[itemID-1][WL][0];
-//         next_W = ds[itemID-1][WL][1];
-//     }
-//     else{
-//         next_val = ds[itemID-1][oldWL][0]+values[itemID];
-//         next_W = ds[itemID-1][oldWL][1]+weights[itemID];
-//     }
-//     ds[itemID][WL][0]=next_val;
-//     ds[itemID][WL][1]=next_W;
-
-// }
-//,char *strings[]
-
-void compute_cell(int itemID, int WL){
-    if(itemID==0||WL==0){
+//TODO : comments!
+void compute_cell(int itemID, int WL){//mostly if statmants
+    if(WL==0){
         ds[itemID][WL]=0;
         return;
     }
     if(ds[itemID][WL]!=-1){
         return;
     }
-
-    if(ds[itemID-1][WL-(int)weights[itemID]]+(int)values[itemID]<=(int)ds[itemID-1][WL]){
+    //first row
+    if(itemID==0 && WL-(int)weights[itemID]<0){
+        ds[itemID][WL]=0;
+        return;
+    }
+    if(itemID==0 && WL-(int)weights[itemID]>=0){
+        ds[itemID][WL]=values[itemID];
+        return;
+    }
+    //early columns
+    if(WL-(int)weights[itemID]<0){
+        ds[itemID][WL]=ds[itemID-1][WL];
+        return;
+    }
+    //rest of the cells, choose max
+    if(WL-(int)weights[itemID]>=0 && ds[itemID-1][WL-(int)weights[itemID]]+(int)values[itemID]>=(int)ds[itemID-1][WL]){
+        ds[itemID][WL]=ds[itemID-1][WL-(int)weights[itemID]]+(int)values[itemID];
+        return;
+    }
+    if(WL-(int)weights[itemID]>=0 && ds[itemID-1][WL-(int)weights[itemID]]+(int)values[itemID]<(int)ds[itemID-1][WL]){
         ds[itemID][WL]=ds[itemID-1][WL];
     }
-    else{
-        ds[itemID][WL]=ds[itemID-1][WL-(int)weights[itemID]]+(int)values[itemID];
-    }
 
 }
-
-void selectItems(float values[5], float weights[5], int numStrings){
-    for(int i=0;i<5;i++){
-        for(int j=0;j<20;j++){
-            //ds[i][j][0]=-1;
-            //ds[i][j][1]=-1;
+void TraceBack(int indeces[5]){//indeces starts with all values at 0.
+    int i = 4;
+    int j = 20;
+    while(ds[i][j]!=0){
+        if (ds[i-1][j]<=ds[i-1][j-(int)weights[i]] + values[i]){
+            indeces[i]=1;
+            j=j-(int)weights[i];
+        }
+        i=i-1;
+    }
+}
+void selectItems(float values[5], float weights[5], char *strings[], int numStrings){
+    for(int i=0;i<5;i++){//initialize ds
+        for(int j=0;j<21;j++){
             ds[i][j]=-1;
         }
-
     }
-    for(int i=0;i<5;i++){
-        for(int j=0;j<20;j++){
+    for(int i=0;i<5;i++){//compute all values
+        for(int j=0;j<21;j++){
             compute_cell(i,j);
         }
-
     }
-    // printf("max value = %f\n",ds[4][19][0]);
-    printf("max value = %f\n",ds[4][19]);
-    return;
+    best_value_for_waight = (float)ds[4][19];//static for print in main
+    int indeces[5] = {0};
+    TraceBack(indeces);//find witch items were choosen
+    for(int i=0;i<5;i++){
+        if(indeces[i]==0){
+            strings[i]="";
+        }
+    }
 }
-
-
 int main(){
-    
-
-    for(int i;i<5;i++){
-        // scanf("%255s", names[i]);
+    for(int i;i<5;i++){//take input
+        scanf("%255s", names[i]);
+        strAdress[i] = names[i];
         scanf("%f",&values[i]);
         scanf("%f",&weights[i]);
     }
-    //printf("%c,%c,%c,%c,%c\n",names[0],names[1],names[2],names[3],names[4]);
-    // printf("%f,%f,%f,%f,%f\n",weights[0],weights[1],weights[2],weights[3],weights[4]);
-    // printf("%f,%f,%f,%f,%f\n",values[0],values[1],values[2],values[3],values[4]);
-    selectItems(values, weights, 5);
+    selectItems(values, weights, strAdress, 5);//select the best solution
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    printf("yo yo this is working mate!\n");
+    for(int i=0;i<5;i++){//print all choosen strings
+        if(names[i][0] != '\0'){
+            printf("%s",strAdress[i]);
+        }
+    }
+    printf("\nMax sum of values : %d\n", (int)best_value_for_waight);//print the saved static value
+    for(int i=0;i<5;i++){
+        for(int j=0;j<21;j++){
+            printf("%d ",(int)ds[i][j]);
+        }
+    printf("\n");
+    }
     return 0;
 }
