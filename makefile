@@ -1,30 +1,30 @@
 CC=gcc
 AR=ar
-OBJECT_MAIN=main_mat.o
-OBJECT_MAIND=maind.o
+OBJECT_MAIN=my_graph.o
+OBJECT_MAIND=my_knapsack.o
 OBJECT_LIB=my_mat.o
 FLAGS= -Wall -g
 
-all: main_mat my_mat.a maind
-mat: main_mat my_mat.a
-din: maind
+all: my_graph my_mat.a my_knapsack
+graph: my_graph my_mat.a
+knap: my_knapsack
 
-main_mat: $(OBJECT_MAIN) my_mat.a
-	$(CC) $(FLAGS) -o main_mat $(OBJECT_MAIN) my_mat.a
-maind: $(OBJECT_MAIND)
-	$(CC) $(FLAGS) -o maind $(OBJECT_MAIND)
+my_graph: $(OBJECT_MAIN) my_mat.a
+	$(CC) $(FLAGS) -o my_graph $(OBJECT_MAIN) my_mat.a
+my_knapsack: $(OBJECT_MAIND)
+	$(CC) $(FLAGS) -o my_knapsack $(OBJECT_MAIND)
 my_mat.a: $(OBJECT_LIB)
 	$(AR) -rcs my_mat.a $(OBJECT_LIB)
 
 
-main_mat.o: main_mat.c my_mat.h
-	$(CC) $(FLAGS) -c main_mat.c
-maind.o: maind.c
-	$(CC) $(FLAGS) -c maind.c
+my_graph.o: my_graph.c my_mat.h
+	$(CC) $(FLAGS) -c my_graph.c
+my_knapsack.o: my_knapsack.c
+	$(CC) $(FLAGS) -c my_knapsack.c
 my_mat.o: my_mat.c my_mat.h
 	$(CC) $(FLAGS) -c my_mat.c
 
 .PHONY: clean all
 
 clean:
-	rm -f *.o *.a   main_mat maind
+	rm -f *.o *.a   my_graph my_knapsack
