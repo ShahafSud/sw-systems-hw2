@@ -5,7 +5,7 @@
 static int ds [numItem][WhightLim+1] = {0};
 static int values[numItem];
 static int weights[numItem];
-char names[numItem][256];
+char names[numItem][20];
 char *strAdress[numItem];
 static int best_value_for_waight = 0;
 
@@ -75,28 +75,22 @@ void selectItems(int values[numItem], int weights[numItem], int selected_bool[nu
 }
 int main(){
     for(int i;i<numItem;i++){//take input
-        printf("name of item %d : ",i+1);
-        scanf("%255s", names[i]);
+        scanf("%20s", names[i]);
         strAdress[i] = names[i];
-        printf("value of item %d : ",i+1);
         scanf("%d",&values[i]);
-        printf("weight of item %d : ",i+1);
         scanf("%d",&weights[i]);
     }
     int indeces[numItem] = {0};
     selectItems(values, weights, indeces);//select the best solution
-
+    printf("Maximum profit: %d\n", best_value_for_waight);//print the saved static value
+    printf("Selected items:");
     for(int i=0;i<numItem;i++){//print all choosen strings
         if(names[i][0] != '\0'){
-            printf("%s",strAdress[i]);
+            if(strAdress[i][0] != '\0'){
+                printf(" %s",strAdress[i]);
+            }
         }
     }
-    printf("\nMax sum of values : %d\n", best_value_for_waight);//print the saved static value
-    for(int i=0;i<numItem;i++){
-        for(int j=0;j<WhightLim+1;j++){
-            printf("%d ",ds[i][j]);
-        }
     printf("\n");
-    }
     return 0;
 }
